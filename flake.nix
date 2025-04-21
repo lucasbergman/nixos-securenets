@@ -31,5 +31,9 @@
       {
         formatter = treefmt.config.build.wrapper;
       }
-    );
+    )
+    // {
+      terranixModules.securenets = import ./nix/terranix.nix;
+      terranixModule.imports = [ self.terranixModules.securenets ];
+    };
 }
