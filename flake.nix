@@ -30,6 +30,12 @@
       in
       {
         formatter = treefmt.config.build.wrapper;
+
+        nixosModules.securenets =
+          { ... }:
+          {
+            imports = [ ./nix/nixos.nix ];
+          };
       }
     )
     // {
