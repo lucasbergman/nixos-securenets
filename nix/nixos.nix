@@ -41,6 +41,7 @@ in
     let
       cfg = config.slb.securenet;
       netname = cfg.network;
+      wireGuardPort = 51820;
       getSingle =
         pred: list:
         let
@@ -75,12 +76,16 @@ in
           {
             PublicKey = peerHost.pubkey;
             AllowedIPs = [ peerHost.addr ];
-            Endpoint = if peerAddr != null then "${peerAddr}:51820" else null;
+            Endpoint = if peerAddr != null then "${peerAddr}:${wireGuardPort}" else null;
             PersistentKeepalive = if peerAddr != null && (shouldKeepaliveTo peerHost) then 20 else null;
           }
         );
     in
     lib.mkIf cfg.enable {
+
+      # Open the WireGuard port in the firewall
+      networking.firewall.allowedUDPPorts = [ wireGuardPort ];
+
       systemd.network = {
         # TODO: Support more than one network
         netdevs."50-${netname}0" = {
@@ -91,7 +96,7 @@ in
           };
           wireguardConfig = {
             PrivateKeyFile = cfg.privateKeyPath;
-            ListenPort = 51820;
+            ListenPort = wireGuardPort;
           };
           wireguardPeers = builtins.map mkPeer peerHosts;
         };
