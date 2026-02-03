@@ -76,7 +76,7 @@ in
           {
             PublicKey = peerHost.pubkey;
             AllowedIPs = [ peerHost.addr ];
-            Endpoint = if peerAddr != null then "${peerAddr}:${wireGuardPort}" else null;
+            Endpoint = if peerAddr != null then "${peerAddr}:${builtins.toString wireGuardPort}" else null;
             PersistentKeepalive = if peerAddr != null && (shouldKeepaliveTo peerHost) then 20 else null;
           }
         );
